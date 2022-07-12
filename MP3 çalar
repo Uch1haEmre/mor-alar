@@ -1,0 +1,45 @@
+public partial class Form1 : Form
+{
+[DllImport("winmm.dll")]
+private static extern long mciSendString(string strCommand, StringBuilder strReturn, int iReturnLength, IntPtr hwndCallback);
+public string Pcommand;
+public bool isOpen;
+public Form1()
+{
+InitializeComponent();
+}
+private void button1_Click(object sender, EventArgs e)
+{
+openFileDialog1.Filter = "Media File(*.mpg,*.dat,*.avi,*.wmv,*.wav,*.mp3)|*.wav;*.mp3;*.mpg;*.dat;*.avi;*.wmv";
+openFileDialog1.ShowDialog();
+if (openFileDialog1.FileName != "")
+textBox1.Text = openFileDialog1.FileName;
+}
+private void button2_Click(object sender, EventArgs e)
+{
+Pcommand = "open "" + textBox1.Text + "" type mpegvideo alias MediaFile";
+mciSendString(Pcommand, null, 0, IntPtr.Zero);
+isOpen = true;
+Play(true);
+}
+private void button3_Click(object sender, EventArgs e)
+{
+Pcommand = "close MediaFile";
+mciSendString(Pcommand, null, 0, IntPtr.Zero);
+isOpen = false;
+}
+private void button4_Click(object sender, EventArgs e)
+{
+Application.Exit();
+}
+public void Play(bool loop)
+{
+if (isOpen)
+{
+Pcommand = "play MediaFile";
+if (loop)
+Pcommand += " REPEAT";
+mciSendString(Pcommand, null, 0, IntPtr.Zero);
+}
+}
+}
